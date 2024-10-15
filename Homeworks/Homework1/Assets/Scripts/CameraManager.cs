@@ -8,6 +8,7 @@ public class CameraManager : MonoBehaviour
     public Camera secondaryCamera;
     public Transform targetObject;
     public float smoothSpeed = 0.125f;
+    public Vector3 offset = new Vector3(10f, 10f, 0f); // Offset from the target object
 
     private bool isSecondaryCameraActive = false;
 
@@ -30,13 +31,13 @@ public class CameraManager : MonoBehaviour
 
         if (isSecondaryCameraActive)
         {
-            Vector3 desiredPosition = targetObject.position + targetObject.forward * -10f + Vector3.up * 2f;
+            Vector3 desiredPosition = targetObject.position + offset;
             Vector3 smoothedPosition = Vector3.Lerp(secondaryCamera.transform.position, desiredPosition, smoothSpeed);
             secondaryCamera.transform.position = smoothedPosition;
 
-            Quaternion desiredRotation = Quaternion.LookRotation(targetObject.forward);
-            Quaternion smoothedRotation = Quaternion.Slerp(secondaryCamera.transform.rotation, desiredRotation, smoothSpeed);
-            secondaryCamera.transform.rotation = smoothedRotation;
+            Vector3 lookAtPosition = targetObject.position;
+            lookAtPosition.y = secondaryCamera.transform.position.y; // Maintain the camera's y position
+            secondaryCamera.transform.LookAt(lookAtPosition);
         }
     }
 }
